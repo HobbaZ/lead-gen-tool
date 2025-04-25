@@ -3,28 +3,26 @@
 import emailjs from "@emailjs/browser";
 import { useState } from "react";
 
-export default function LeadMagnetPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function GetDownload({}) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [infoMessage, setInfoMessage] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSendingEmail(true);
 
     try {
+      const downloadUrl = ""; //change to dynamic link when accessing database
+
       const result = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         {
           email,
-          link: "", // dynamic download link string
+          link: downloadUrl,
         },
         process.env.NEXT_PUBLIC_EMAILJS_USER_ID!
       );
@@ -37,10 +35,12 @@ export default function LeadMagnetPage({
         setEmailSent(false);
         setInfoMessage("");
       }, 3000);
-    } catch (error: any) {
-      console.error("Email failed: ", error.code, error.message);
-      setInfoMessage("Email failed to send.");
-      setEmailSent(false);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Email failed: ", error.message);
+        setInfoMessage("Email failed to send.");
+        setEmailSent(false);
+      }
 
       setTimeout(() => {
         setInfoMessage("");
@@ -71,9 +71,17 @@ export default function LeadMagnetPage({
             className="bg-blue-600 text-white px-4 py-2 rounded"
           >
             Get It
+            {sendingEmail ? (
+              "Sending ..."
+            ) : emailSent ? (
+              <>Email Sent</>
+            ) : (
+              <>Email Failed</>
+            )}
           </button>
         </form>
       )}
+      {infoMessage && <div className="text-center pt-2">{infoMessage}</div>}
     </main>
   );
 }

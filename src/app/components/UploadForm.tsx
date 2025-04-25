@@ -9,7 +9,8 @@ export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
   const [link, setLink] = useState<string | null>(null);
 
-  const handleUpload = async () => {
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!file) return;
     const storageRef = ref(storage, `leadMagnets/${uuid()}-${file.name}`);
     await uploadBytes(storageRef, file);

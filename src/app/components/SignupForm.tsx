@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
 const SignupForm = () => {
@@ -22,8 +22,10 @@ const SignupForm = () => {
       setMessage(`✅ Signup successful: ${userCredential.user.email}`);
       setEmail("");
       setPassword("");
-    } catch (error: any) {
-      setMessage(`❌ ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(`❌ ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }

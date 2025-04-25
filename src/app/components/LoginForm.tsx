@@ -22,8 +22,10 @@ const LoginForm = () => {
       const user = userCredential.user;
       setMessage(`✅ Welcome back, ${user.email}`);
       // Redirect or update UI as needed here
-    } catch (error: any) {
-      setMessage(`❌ ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(`❌ ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
