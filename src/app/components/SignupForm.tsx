@@ -34,9 +34,9 @@ const SignupForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-sm mx-auto p-4 bg-black rounded-lg shadow-md space-y-4"
+      className="max-w-sm mx-auto p-4 rounded-lg shadow space-y-4"
     >
-      <h2 className="text-xl font-semibold text-center text-black">Sign Up</h2>
+      <h2 className="text-xl font-semibold text-center">Sign Up</h2>
 
       <input
         type="email"
@@ -59,7 +59,7 @@ const SignupForm = () => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 text-white rounded py-2 hover:bg-blue-700 transition"
+        className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition"
       >
         {loading ? "Signing up..." : "Sign Up"}
       </button>
