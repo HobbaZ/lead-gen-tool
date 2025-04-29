@@ -7,7 +7,6 @@ import { useState } from "react";
 
 export default function UploadForm() {
   const [uploadFile, setUploadFile] = useState<File[] | null>(null);
-  const [link, setLink] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const maxSize = 5 * 1024 * 1024;
@@ -19,8 +18,11 @@ export default function UploadForm() {
     if (!uploadFile || uploadFile.length === 0) return;
 
     try {
-      // Upload each file separately
       for (const file of uploadFile) {
+        if (file.size > maxSize) {
+          console.warn(`Skipped: ${file.name} (too large)`);
+          continue;
+        }
         const storageRef = ref(storage, `leadMagnets/${uuid()}-${file.name}`);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
@@ -39,7 +41,7 @@ export default function UploadForm() {
   return (
     <form
       onSubmit={handleUpload}
-      className="max-w-sm mx-auto p-4 rounded-lg shadow space-y-4"
+      className="w-full max-w-96 mx-auto p-4 rounded-lg shadow space-y-4"
     >
       <h2 className="text-xl font-semibold text-center">Upload your lead</h2>
 
@@ -61,7 +63,7 @@ export default function UploadForm() {
 
       {uploadFile?.length > 0 ? (
         <ul>
-          {uploadFile.map((file, index) => (
+          {uploadFile?.map((file, index) => (
             <li key={index}>
               {file.size < maxSize ? (
                 <>
@@ -78,9 +80,9 @@ export default function UploadForm() {
                     (prev) => prev?.filter((_, i) => i !== index) || []
                   );
                 }}
-                className="text-red-500 pl-3 hover:underline"
+                className="pl-3 hover:underline"
               >
-                X
+                ❌
               </button>
             </li>
           ))}
@@ -89,20 +91,13 @@ export default function UploadForm() {
         <p className="text-center">No files have been selected</p>
       )}
 
-      {uploadFile?.length > 0 && (
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition"
-        >
-          {loading ? "Uploading..." : "Upload"}
-        </button>
-      )}
-      {link && (
-        <p className="mt-4 text-green-600">
-          Upload successful! Link: <a href={link}>{link}</a>
-        </p>
-      )}
+      <button
+        type="submit"
+        disabled={loading || !uploadFile || uploadFile?.length === 0}
+        className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition disabled:bg-gray-600"
+      >
+        {loading ? "Uploading..." : "Upload"}
+      </button>
 
       {message && (
         <p className="text-center text-sm text-gray-700">{message}</p>

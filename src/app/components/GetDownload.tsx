@@ -2,6 +2,7 @@
 
 import emailjs from "@emailjs/browser";
 import { useState } from "react";
+import { emailRegex } from "./EmailRegex";
 
 export default function GetDownload({}) {
   const [email, setEmail] = useState("");
@@ -57,7 +58,10 @@ export default function GetDownload({}) {
       {sent ? (
         <p className="text-green-600">Check your inbox! 🎉</p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-96 mx-auto p-4 rounded-lg shadow space-y-4"
+        >
           <input
             type="email"
             required
@@ -66,9 +70,19 @@ export default function GetDownload({}) {
             onChange={(e) => setEmail(e.target.value)}
             className="p-2 border rounded"
           />
+
+          <div className="min-h-[1.5rem]">
+            {email != "" && email.length > 0 && !email.match(emailRegex) ? (
+              <p className="text-center text-red-500 text-sm p-0 m-0">
+                Needs to be a valid email
+              </p>
+            ) : null}
+          </div>
+
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            disabled={!email.match(emailRegex)}
+            className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition disabled:bg-gray-600"
           >
             Get It
             {sendingEmail ? (
