@@ -16,11 +16,24 @@ export default function UploadForm() {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    if (!uploadFile) return;
-    const storageRef = ref(storage, `leadMagnets/${uuid()}-${uploadFile.name}`);
-    await uploadBytes(storageRef, uploadFile);
-    const url = await getDownloadURL(storageRef);
-    setLink(url);
+    if (!uploadFile || uploadFile.length === 0) return;
+
+    try {
+      // Upload each file separately
+      for (const file of uploadFile) {
+        const storageRef = ref(storage, `leadMagnets/${uuid()}-${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        console.log(`Uploaded: ${file.name}, URL: ${url}`);
+      }
+
+      setMessage("All files uploaded successfully!");
+    } catch (error) {
+      console.error(error);
+      setMessage("Failed to upload files.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,7 +43,7 @@ export default function UploadForm() {
     >
       <h2 className="text-xl font-semibold text-center">Upload your lead</h2>
 
-      <label className="custom-file-upload">
+      <label className="custom-file-upload w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition text-center">
         <input
           name="leads[]"
           type="file"
@@ -39,12 +52,14 @@ export default function UploadForm() {
             setUploadFile(e.target.files ? Array.from(e.target.files) : null)
           }
         />
-        <i className="fa fa-cloud-upload"></i> Upload File/s
+        <i className="fa-solid fa-cloud-arrow-up"></i> Choose File/s
       </label>
 
-      <p>Maximum file size is 5MB</p>
+      <p className="text-center">
+        <sub>Maximum file size is 5MB</sub>
+      </p>
 
-      {uploadFile?.length > 0 && (
+      {uploadFile?.length > 0 ? (
         <ul>
           {uploadFile.map((file, index) => (
             <li key={index}>
@@ -53,7 +68,7 @@ export default function UploadForm() {
                   {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                 </>
               ) : (
-                <>{file.name} - file is too big to upload</>
+                <>{file.name} - file is over the maximum file size limit</>
               )}
 
               <button
@@ -70,15 +85,19 @@ export default function UploadForm() {
             </li>
           ))}
         </ul>
+      ) : (
+        <p className="text-center">No files have been selected</p>
       )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition"
-      >
-        {loading ? "Uploading..." : "Submit"}
-      </button>
+      {uploadFile?.length > 0 && (
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition"
+        >
+          {loading ? "Uploading..." : "Upload"}
+        </button>
+      )}
       {link && (
         <p className="mt-4 text-green-600">
           Upload successful! Link: <a href={link}>{link}</a>
