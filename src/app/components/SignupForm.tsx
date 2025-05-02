@@ -1,35 +1,18 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../lib/firebase";
+
 import { emailRegex } from "./EmailRegex";
+import { useSignup } from "../api/useSignup";
 
 const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const { signup, loading, message } = useSignup();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      setMessage(`✅ Signup successful: ${userCredential.user.email}`);
-      setEmail("");
-      setPassword("");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(`❌ ${error.message}`);
-      }
-    } finally {
-      setLoading(false);
-    }
+    if (!email.match(emailRegex) || password.length < 8) return;
+    await signup(email, password);
   };
 
   return (

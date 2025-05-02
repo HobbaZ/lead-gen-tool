@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "../lib/firebase";
 
 export default function Header() {
   return (
@@ -13,9 +14,17 @@ export default function Header() {
         <Link href="/signup" className="text-sm hover:underline">
           Sign Up
         </Link>
-        <Link href="/upload" className="text-sm hover:underline">
-          Upload form
-        </Link>
+
+        {auth.currentUser !== null && (
+          <>
+            <Link href="/upload" className="text-sm hover:underline">
+              Upload form
+            </Link>
+            <Link href="/profile" className="text-sm hover:underline">
+              Profile
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );

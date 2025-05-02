@@ -2,34 +2,16 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { emailRegex } from "./EmailRegex";
+import useLogin from "../api/useLogin";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const { login, loading, message } = useLogin();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      setMessage(`✅ Welcome back, ${user.email}`);
-      // Redirect or update UI as needed here
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(`❌ ${error.message}`);
-      }
-    } finally {
-      setLoading(false);
-    }
+    await login(email, password);
   };
 
   return (
