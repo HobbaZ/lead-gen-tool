@@ -1,18 +1,27 @@
 import { useState } from "react";
-
 import { emailRegex } from "./EmailRegex";
 import { useSignup } from "../api/useSignup";
+import useValidatePassword from "../api/useValidatePassword";
 
 const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signup, loading, message } = useSignup();
+  const { checkPassword, passwordMessage } = useValidatePassword();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email.match(emailRegex) || password.length < 8) return;
     await signup(email, password);
+  };
+
+  const handlePasswordInput = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    await checkPassword(newPassword);
   };
 
   return (
@@ -33,8 +42,8 @@ const SignupForm = () => {
 
       <div className="min-h-[1.5rem]">
         {email != "" && email.length > 0 && !email.match(emailRegex) ? (
-          <p className="text-center text-red-500 text-sm p-0 m-0">
-            Needs to be a valid email
+          <p className="text-start text-red-500 text-sm p-0 m-0">
+            ❌ Needs to be a valid email
           </p>
         ) : null}
       </div>
@@ -43,16 +52,16 @@ const SignupForm = () => {
         type="password"
         placeholder="Password (min 8 characters)"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={handlePasswordInput}
         required
         minLength={8}
         className="w-full border rounded px-3 py-2"
       />
 
       <div className="min-h-[1.5rem]">
-        {password != "" && password.length < 8 ? (
-          <p className="text-center text-red-500 text-sm">
-            Password needs to be at least 8 characters
+        {password != "" ? (
+          <p className="text-start text-red-500 text-sm whitespace-pre-line">
+            {passwordMessage}
           </p>
         ) : null}
       </div>

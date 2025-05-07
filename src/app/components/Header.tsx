@@ -28,7 +28,7 @@ export default function Header() {
             <Link href="/profile" className="text-sm hover:underline">
               Profile
             </Link>
-            <Link href="/login" className="text-sm hover:underline">
+            <Link href="/logout" className="text-sm hover:underline">
               Logout
             </Link>
           </>

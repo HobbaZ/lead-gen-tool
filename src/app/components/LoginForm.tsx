@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../lib/firebase";
 import { emailRegex } from "./EmailRegex";
 import useLogin from "../api/useLogin";
 
@@ -32,8 +30,8 @@ const LoginForm = () => {
 
       <div className="min-h-[1.5rem]">
         {email != "" && email.length > 0 && !email.match(emailRegex) ? (
-          <p className="text-center text-red-500 text-sm p-0 m-0">
-            Needs to be a valid email
+          <p className="text-start text-red-500 text-sm p-0 m-0">
+            ❌ Needs to be a valid email
           </p>
         ) : null}
       </div>
