@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import { useRouter } from "next/router";
 
 export function useSignup() {
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ export function useSignup() {
         password
       );
       setMessage(`Signup successful: ${userCredential.user.email}`);
+      useRouter().push("/login");
     } catch (error: any) {
       setMessage(`❌ ${error.message}`);
     } finally {

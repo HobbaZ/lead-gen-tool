@@ -8,20 +8,28 @@ export default function Header() {
         <span className="text-lg font-semibold">Lead Tool</span>
       </div>
       <nav className="flex gap-4">
-        <Link href="/login" className="text-sm hover:underline">
-          Login
-        </Link>
-        <Link href="/signup" className="text-sm hover:underline">
-          Sign Up
-        </Link>
-
-        {auth.currentUser !== null && (
+        {auth.currentUser === null ? (
           <>
+            <Link href="/login" className="text-sm hover:underline">
+              Login
+            </Link>
+            <Link href="/signup" className="text-sm hover:underline">
+              Sign Up
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/dashboard" className="text-sm hover:underline">
+              Dashboard
+            </Link>
             <Link href="/upload" className="text-sm hover:underline">
-              Upload form
+              Upload
             </Link>
             <Link href="/profile" className="text-sm hover:underline">
               Profile
+            </Link>
+            <Link href="/login" className="text-sm hover:underline">
+              Logout
             </Link>
           </>
         )}
