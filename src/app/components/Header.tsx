@@ -1,14 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { auth } from "../lib/firebase";
+import useAuth from "../api/useAuth";
 
 export default function Header() {
+  const { user } = useAuth();
+
   return (
     <header className="flex justify-between items-center w-full max-w-5xl mx-auto">
       <div className="flex items-center gap-2">
         <span className="text-lg font-semibold">Lead Tool</span>
       </div>
       <nav className="flex gap-4">
-        {auth.currentUser === null ? (
+        {user === null ? (
           <>
             <Link href="/login" className="text-sm hover:underline">
               Login
